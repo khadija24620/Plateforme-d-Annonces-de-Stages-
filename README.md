@@ -18,48 +18,32 @@
 
 </div>
 
----
 
-## 📌 Table des matières
-
-- [Aperçu](#-aperçu)
-- [Fonctionnalités](#-fonctionnalités)
-- [Architecture](#-architecture)
-- [Technologies](#-technologies)
-- [Installation](#-installation)
-- [Variables d'environnement](#-variables-denvironnement)
-- [API Endpoints](#-api-endpoints)
-- [Flux d'utilisation](#-flux-dutilisation)
-- [Structure du projet](#-structure-du-projet)
-- [Contribution](#-contribution)
-
----
-
-## 🔍 Aperçu
+## Aperçu
 
 La **Plateforme d'Annonces de Stages** est une application web full-stack développée avec une architecture **MVC**. Elle connecte trois types d'utilisateurs :
 
 | Rôle | Accès |
 |------|-------|
-| 🎓 **Étudiant** | Consulter les offres, postuler avec CV PDF |
-| 🏢 **Entreprise** | Publier des offres, voir les candidats |
-| 🛡️ **Admin** | Valider / refuser les candidatures |
+|  **Étudiant** | Consulter les offres, postuler avec CV PDF |
+|  **Entreprise** | Publier des offres, voir les candidats |
+|  **Admin** | Valider / refuser les candidatures |
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
-- 🔐 **Authentification JWT** — Register / Login sécurisé avec token
-- 📋 **Gestion des offres** — CRUD complet pour les entreprises
-- 📄 **Upload de CV** — Envoi de fichiers PDF via Multer
-- 👥 **3 rôles distincts** — Permissions granulaires par rôle
-- ✅ **Workflow de validation** — Statut `pending → accepted / rejected`
-- 🔗 **Relations MongoDB** — Références entre User, Offer, Application
-- 🚀 **API RESTful** — Endpoints clairs et documentés
+-  **Authentification JWT** — Register / Login sécurisé avec token
+-  **Gestion des offres** — CRUD complet pour les entreprises
+-  **Upload de CV** — Envoi de fichiers PDF via Multer
+-  **3 rôles distincts** — Permissions granulaires par rôle
+-  **Workflow de validation** — Statut `pending → accepted / rejected`
+-  **Relations MongoDB** — Références entre User, Offer, Application
+-  **API RESTful** — Endpoints clairs et documentés
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 MVC (Model - View - Controller)
@@ -92,7 +76,7 @@ frontend/
 
 ---
 
-## 🛠️ Technologies
+##  Technologies
 
 ### Backend
 | Package | Version | Rôle |
@@ -114,7 +98,7 @@ frontend/
 
 ---
 
-## 🚀 Installation
+##  Installation
 
 ### Prérequis
 
@@ -167,7 +151,7 @@ L'API sera disponible sur `http://localhost:5000` et le frontend sur `http://loc
 
 ---
 
-## 🔑 Variables d'environnement
+##  Variables d'environnement
 
 | Variable | Description | Exemple |
 |----------|-------------|---------|
@@ -177,43 +161,43 @@ L'API sera disponible sur `http://localhost:5000` et le frontend sur `http://loc
 
 ---
 
-## 📡 API Endpoints
+##  API Endpoints
 
 ### Auth
-| Méthode | Route | Description | Auth |
-|---------|-------|-------------|------|
-| `POST` | `/api/auth/register` | Créer un compte | ❌ |
-| `POST` | `/api/auth/login` | Se connecter | ❌ |
+| Méthode | Route | Description |
+|---------|-------|-------------|
+| `POST` | `/api/auth/register` | Créer un compte |
+| `POST` | `/api/auth/login` | Se connecter |
 
 ### Offres de stage
-| Méthode | Route | Description | Auth | Rôle |
-|---------|-------|-------------|------|------|
-| `GET` | `/api/offers` | Lister toutes les offres actives | ❌ | — |
-| `POST` | `/api/offers` | Créer une offre | ✅ | `company` |
-| `GET` | `/api/offers/my` | Mes offres | ✅ | `company` |
+| Méthode | Route | Description | Rôle |
+|---------|-------|--------------|------|
+| `GET` | `/api/offers` | Lister toutes les offres actives | — |
+| `POST` | `/api/offers` | Créer une offre | `company` |
+| `GET` | `/api/offers/my` | Mes offres | `company` |
 
 ### Candidatures
-| Méthode | Route | Description | Auth | Rôle |
-|---------|-------|-------------|------|------|
-| `POST` | `/api/applications` | Postuler (avec CV PDF) | ✅ | `student` |
-| `GET` | `/api/offers/:offerId/applications` | Voir les candidats d'une offre | ✅ | `company` |
-| `PATCH` | `/api/applications/:id/status` | Accepter / Refuser | ✅ | `admin` |
+| Méthode | Route | Description | Rôle |
+|---------|-------|-------------|------|
+| `POST` | `/api/applications` | Postuler (avec CV PDF) |  `student` |
+| `GET` | `/api/offers/:offerId/applications` | Voir les candidats d'une offre | `company` |
+| `PATCH` | `/api/applications/:id/status` | Accepter / Refuser | `admin` |
 
 ---
 
-## 🔄 Flux d'utilisation
+##  Flux d'utilisation
 
 ```
-1. 🏢 Entreprise  →  POST /api/offers         →  Publie "Stage Dev Fullstack 6 mois"
-2. 🎓 Étudiant    →  GET  /api/offers         →  Consulte les offres disponibles
-3. 🎓 Étudiant    →  POST /api/applications   →  Postule avec son CV (PDF)
-4. 🛡️ Admin       →  PATCH /applications/status →  Passe le statut à "accepted"
-5. 🏢 Entreprise  →  GET  /api/offers/:id/applications → Voit les candidats acceptés
+1.  Entreprise  →  POST /api/offers         →  Publie "Stage Dev Fullstack 6 mois"
+2.  Étudiant    →  GET  /api/offers         →  Consulte les offres disponibles
+3.  Étudiant    →  POST /api/applications   →  Postule avec son CV (PDF)
+4.  Admin       →  PATCH /applications/status →  Passe le statut à "accepted"
+5.  Entreprise  →  GET  /api/offers/:id/applications → Voit les candidats acceptés
 ```
 
 ---
 
-## 📁 Structure du projet
+##  Structure du projet
 
 ```
 plateforme-stages/
@@ -261,7 +245,7 @@ Les contributions sont les bienvenues !
 
 ---
 
-## 📄 Licence
+##  Licence
 
 Distribué sous la licence **MIT**. Voir `LICENSE` pour plus d'informations.
 
