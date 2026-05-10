@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Uploads (CV PDF)
+backend/uploads/
+
+# React build
+frontend/build/
+
+# OS
+.DS_Store
