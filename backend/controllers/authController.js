@@ -4,6 +4,7 @@ const User = require('../models/User');
 
 exports.register = async (req, res) => {
   try {
+    console.log('BODY REÇU:', req.body); 
     const user = new User(req.body);
     await user.save();
     const token = jwt.sign(
@@ -16,6 +17,7 @@ exports.register = async (req, res) => {
       user: { id: user._id, email: user.email, role: user.role } 
     });
   } catch (err) {
+    console.error('ERREUR REGISTER:', err.message); // ← and this
     res.status(400).json({ error: err.message });
   }
 };

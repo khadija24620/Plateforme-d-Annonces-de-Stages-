@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import api from '../api/axios';
+import api from '../api/axios';
 
 const C = {
   bg: '#0d0b12', bgCard: '#13101c', bgInput: '#1a1628',
@@ -131,22 +131,26 @@ export default function Register() {
 
   const set = (key) => (val) => setForm(f => ({ ...f, [key]: val }));
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    if (!form.email || !form.password) { setError('Veuillez remplir tous les champs obligatoires.'); return; }
-    if (form.password !== form.confirm) { setError('Les mots de passe ne correspondent pas.'); return; }
-    if (form.password.length < 8) { setError('Le mot de passe doit contenir au moins 8 caractères.'); return; }
-    setError(''); setLoading(true);
-    try {
-      // await api.post('/auth/register', { email: form.email, password: form.password, role: form.role, companyName: form.companyName });
-      await new Promise(r => setTimeout(r, 1200));
-      setSuccess(true);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Une erreur est survenue.');
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleRegister = async (e) => {
+  e.preventDefault();
+  if (!form.email || !form.password) { setError('Veuillez remplir tous les champs obligatoires.'); return; }
+  if (form.password !== form.confirm) { setError('Les mots de passe ne correspondent pas.'); return; }
+  if (form.password.length < 8) { setError('Le mot de passe doit contenir au moins 8 caractères.'); return; }
+  setError(''); setLoading(true);
+  try {
+    await api.post('/auth/register', {
+      email: form.email,
+      password: form.password,
+      role: form.role,
+      companyName: form.role === 'company' ? form.companyName : undefined,
+    });
+    setSuccess(true);
+  } catch (err) {
+    setError(err.response?.data?.error || 'Une erreur est survenue.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const roleLabels = { student: 'Étudiant', company: 'Entreprise', admin: 'Administrateur' };
 

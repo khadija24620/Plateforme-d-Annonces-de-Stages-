@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-// import api from '../api/axios';
+import api from '../api/axios';
 
 const C = {
   bg: '#0d0b12', bgCard: '#13101c', bgInput: '#1a1628',
@@ -10,18 +10,6 @@ const C = {
   textMuted: 'rgba(240,234,248,0.3)', red: '#ef4444', success: '#22c55e',
 };
 
-// ── Mock data ─────────────────────────────────────────────────────────────────
-const MOCK_STATS = { total: 24, pending: 8, accepted: 12, rejected: 4 };
-const MOCK_APPLICATIONS = [
-  { _id: 'a1', student: { name: 'Yasmine Benali', email: 'y.benali@etu.fr' }, offer: { title: 'Développeur Full-Stack React / Node.js', company: 'TechCorp Solutions' }, status: 'pending', appliedAt: '2024-11-15', avatar: 'YB' },
-  { _id: 'a2', student: { name: 'Mohamed Aissaoui', email: 'm.aissaoui@etu.fr' }, offer: { title: 'Data Scientist – NLP & Machine Learning', company: 'DataMinds AI' }, status: 'pending', appliedAt: '2024-11-14', avatar: 'MA' },
-  { _id: 'a3', student: { name: 'Camille Dupont', email: 'c.dupont@etu.fr' }, offer: { title: 'Designer UX/UI – Applications Mobiles', company: 'Créativé Studio' }, status: 'accepted', appliedAt: '2024-11-13', avatar: 'CD' },
-  { _id: 'a4', student: { name: 'Riad Mouhoubi', email: 'r.mouhoubi@etu.fr' }, offer: { title: 'Ingénieur DevOps / Cloud AWS', company: 'CloudNine Infra' }, status: 'rejected', appliedAt: '2024-11-12', avatar: 'RM' },
-  { _id: 'a5', student: { name: 'Inès Thibault', email: 'i.thibault@etu.fr' }, offer: { title: 'Chargé(e) de Marketing Digital & SEO', company: 'GrowthHack Agency' }, status: 'pending', appliedAt: '2024-11-11', avatar: 'IT' },
-  { _id: 'a6', student: { name: 'Karim Zeroual', email: 'k.zeroual@etu.fr' }, offer: { title: 'Développeur Mobile Flutter', company: 'AppFactory' }, status: 'pending', appliedAt: '2024-11-10', avatar: 'KZ' },
-  { _id: 'a7', student: { name: 'Léa Fontaine', email: 'l.fontaine@etu.fr' }, offer: { title: 'Développeur Full-Stack React / Node.js', company: 'TechCorp Solutions' }, status: 'accepted', appliedAt: '2024-11-09', avatar: 'LF' },
-  { _id: 'a8', student: { name: 'Sofiane Ramdane', email: 's.ramdane@etu.fr' }, offer: { title: 'Data Scientist – NLP & Machine Learning', company: 'DataMinds AI' }, status: 'pending', appliedAt: '2024-11-08', avatar: 'SR' },
-];
 
 const STATUS_CONFIG = {
   pending:  { label: 'En attente',   bg: 'rgba(245,158,11,0.1)',  border: 'rgba(245,158,11,0.25)',  text: '#fbbf24' },
@@ -248,9 +236,9 @@ export default function AdminDashboard() {
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         color: avatarColor, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em',
                         flexShrink: 0,
-                      }}>{app.avatar}</div>
+                      }}>{app.student?.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?'}   </div>
                       <div>
-                        <p style={{ color: C.text, fontSize: '0.85rem', fontWeight: 600, marginBottom: 2 }}>{app.student.name}</p>
+                        <p style={{ color: C.text, fontSize: '0.85rem', fontWeight: 600, marginBottom: 2 }}>{app.student.fullName}</p>
                         <p style={{ color: C.textMuted, fontSize: '0.72rem' }}>{app.student.email}</p>
                       </div>
                     </div>
@@ -258,7 +246,7 @@ export default function AdminDashboard() {
                     {/* Offre */}
                     <div>
                       <p style={{ color: C.textSec, fontSize: '0.82rem', marginBottom: 2, lineHeight: 1.3 }}>{app.offer.title}</p>
-                      <p style={{ color: C.textMuted, fontSize: '0.72rem' }}>{app.offer.company} · {new Date(app.appliedAt).toLocaleDateString('fr-FR')}</p>
+                      <p style={{ color: C.textMuted, fontSize: '0.72rem' }}>{app.offer.company?.companyName ?? '—'} · {new Date(app.createdAt).toLocaleDateString('fr-FR')}</p>
                     </div>
 
                     {/* Statut */}
