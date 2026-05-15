@@ -7,6 +7,8 @@ import Register from './pages/Register';
 import Offers from './pages/Offers';
 import CreateOffer from './pages/CreateOffer';
 import AdminDashboard from './pages/AdminDashboard';
+import Apply from './pages/Apply';
+import CompanyApplications from './pages/CompanyApplications';
 
 function App() {
   return (
@@ -19,7 +21,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/create-offer" element={<CreateOffer />} />
         <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
+        <Route path="/apply/:offerId" element={<Apply />} />
+        <Route path="/my-offers" element={<CreateOffer />} />
+        <Route path="/my-applications" element={<CompanyApplications />} />
+              </Routes>
     </BrowserRouter>
   );
 }

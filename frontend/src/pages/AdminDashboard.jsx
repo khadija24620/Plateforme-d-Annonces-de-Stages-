@@ -58,15 +58,14 @@ export default function AdminDashboard() {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    const load = async () => {
-      await new Promise(r => setTimeout(r, 900));
-      // const [appsRes, statsRes] = await Promise.all([api.get('/applications'), api.get('/stats')]);
-      setApplications(MOCK_APPLICATIONS);
-      setStats(MOCK_STATS);
-      setLoading(false);
-    };
-    load();
-  }, []);
+  Promise.all([
+    api.get('/applications/all'),  // endpoint à ajouter
+    api.get('/stats')              // endpoint à ajouter
+  ]).then(([appsRes, statsRes]) => {
+    setApplications(appsRes.data);
+    setStats(statsRes.data);
+  }).finally(() => setLoading(false));
+}, []);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -74,18 +73,19 @@ export default function AdminDashboard() {
   };
 
   const handleAction = async (id, action) => {
-    setActionLoading(prev => ({ ...prev, [id]: action }));
-    await new Promise(r => setTimeout(r, 800));
-    // await api.patch(`/applications/${id}`, { status: action });
-    setApplications(prev => prev.map(a => a._id === id ? { ...a, status: action } : a));
-    setStats(prev => ({
-      ...prev,
-      pending: prev.pending - 1,
-      [action]: prev[action] + 1,
-    }));
-    setActionLoading(prev => ({ ...prev, [id]: null }));
+  setActionLoading(prev => ({ ...prev, [id]: action }));
+  try {
+    await api.patch(`/applications/${id}/status`, { status: action });
+    setApplications(prev => prev.map(a =>
+      a._id === id ? { ...a, status: action } : a
+    ));
     showToast(action === 'accepted' ? 'Candidature acceptée !' : 'Candidature refusée.');
-  };
+  } catch {
+    showToast('Erreur', 'error');
+  } finally {
+    setActionLoading(prev => ({ ...prev, [id]: null }));
+  }
+};
 
   const filtered = applications.filter(a => filter === 'all' || a.status === filter);
 

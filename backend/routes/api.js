@@ -20,4 +20,11 @@ router.post('/applications', auth, upload.single('cv'), appCtrl.applyToOffer);
 router.get('/offers/:offerId/applications', auth, appCtrl.getApplicationsForOffer);
 router.patch('/applications/:id/status', auth, appCtrl.updateStatus);
 
+router.get('/applications/all', auth, appCtrl.getAllApplications);  // admin
+router.get('/stats', auth, appCtrl.getStats);                       // admin
+router.get('/offers/:id', offerCtrl.getOfferById);                  // détail offre
+router.delete('/offers/:id', auth, offerCtrl.deleteOffer);          // supprimer offre
+router.patch('/offers/:id', auth, offerCtrl.updateOffer);           // modifier offre
+router.get('/applications/mine', auth, appCtrl.getMyApplications);  // étudiant
+
 module.exports = router;

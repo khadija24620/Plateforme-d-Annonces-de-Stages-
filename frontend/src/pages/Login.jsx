@@ -1,5 +1,10 @@
 import { useState } from 'react';
-// import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
+import { useNavigate } from 'react-router-dom';
+
+const { login } = useAuth();
+const navigate = useNavigate();
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
