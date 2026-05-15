@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 // ─── Design tokens — thème darkred Annostage ───────────────────────────────────
 const C = {
@@ -15,40 +16,19 @@ const C = {
   textMuted:    'rgba(240,234,248,0.3)',
 }
 
-const LINKS = [
-  {
-    to: '/',
-    label: 'Offres',
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/>
-      </svg>
-    ),
-  },
-  {
-    to: '/create-offer',
-    label: 'Créer une offre',
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
-      </svg>
-    ),
-  },
-  {
-    to: '/admin',
-    label: 'Admin',
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 8v4l3 3"/>
-      </svg>
-    ),
-  },
-]
+
 
 export default function Navbar() {
   const location = useLocation()
   const [scrolled,     setScrolled]     = useState(false)
   const [mobileOpen,   setMobileOpen]   = useState(false)
+  const { user, logout } = useAuth();
+const LINKS = [
+  { to: '/', label: 'Offres', icon: <svg>...</svg>, roles: ['student', 'company', 'admin'] },
+  { to: '/create-offer', label: 'Créer une offre', icon: <svg>...</svg>, roles: ['company', 'admin'] },
+  { to: '/my-applications', label: 'Mes candidatures', icon: <svg>...</svg>, roles: ['student'] },
+  { to: '/admin', label: 'Admin', icon: <svg>...</svg>, roles: ['admin'] },
+].filter(link => !user || link.roles.includes(user.role));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -279,20 +259,28 @@ export default function Navbar() {
           </nav>
 
           {/* ── Auth buttons (desktop) ── */}
-          <div className="desktop-auth" style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
-            <Link to="/login" className="btn-login">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
-              </svg>
-              Connexion
-            </Link>
-            <Link to="/register" className="btn-register">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
-              </svg>
-              S'inscrire
-            </Link>
-          </div>
+<div className="desktop-auth" style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+  {user ? (
+    <>
+      <span style={{ color: C.textMuted, fontSize: '0.78rem' }}>
+        {user.email}
+      </span>
+      <button onClick={logout} className="btn-login" style={{ cursor: 'pointer', border: 'none' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Déconnexion
+      </button>
+    </>
+  ) : (
+    <>
+      <Link to="/login" className="btn-login">Connexion</Link>
+      <Link to="/register" className="btn-register">S'inscrire</Link>
+    </>
+  )}
+</div>
 
           {/* ── Hamburger (mobile) ── */}
           <button

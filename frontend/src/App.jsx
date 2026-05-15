@@ -12,25 +12,36 @@ import MyApplications from './pages/MyApplications';
 
 import { useAuth } from './context/AuthContext';
 
-function App() {
-  function PrivateRoute({ children }) {
+function PrivateRoute({ children }) {
   const { user } = useAuth();
   return user ? children : <Navigate to="/login" />;
+}
+function App() {
+  function AdminRoute({ children }) {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== 'admin') return <Navigate to="/" />;
+  return children;
+}
+
+function CompanyRoute({ children }) {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== 'company' && user.role !== 'admin') return <Navigate to="/" />;
+  return children;
 }
   return (
     <BrowserRouter>
       <Navbar />
-
       <Routes>
-        <Route path="/" element={<PrivateRoute><Offers /></PrivateRoute>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/create-offer" element={<CreateOffer />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/apply/:offerId" element={<Apply />} />
-        <Route path="/my-offers" element={<CreateOffer />} />
-        <Route path="/my-applications" element={<MyApplications />} />
-              </Routes>
+        <Route path="/"                element={<PrivateRoute><Offers /></PrivateRoute>} />
+        <Route path="/login"           element={<Login />} />
+        <Route path="/register"        element={<Register />} />
+        <Route path="/create-offer"    element={<CompanyRoute><CreateOffer /></CompanyRoute>} />
+        <Route path="/admin"           element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/apply/:offerId"  element={<PrivateRoute><Apply /></PrivateRoute>} />
+        <Route path="/my-applications" element={<PrivateRoute><MyApplications /></PrivateRoute>} />
+      </Routes>
     </BrowserRouter>
   );
 }
