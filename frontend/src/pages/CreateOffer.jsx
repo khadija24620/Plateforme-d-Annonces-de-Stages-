@@ -1,5 +1,6 @@
 import { useState } from 'react';
-// import api from '../api/axios';
+import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';  // ← décommenté
 
 const C = {
   bg: '#0d0b12', bgCard: '#13101c', bgInput: '#1a1628',
@@ -58,8 +59,7 @@ function FloatingTextarea({ id, label, value, onChange, delay = 0, rows = 5 }) {
     <div style={{ position: 'relative', animation: `slideUp 0.5s cubic-bezier(0.16,1,0.3,1) ${delay}ms both` }}>
       <label htmlFor={id} style={{
         position: 'absolute', left: 16, zIndex: 2, pointerEvents: 'none',
-        top: active ? 10 : 16,
-        fontSize: active ? '0.68rem' : '0.9rem',
+        top: active ? 10 : 16, fontSize: active ? '0.68rem' : '0.9rem',
         color: focused ? C.accent : active ? C.textSec : C.textMuted,
         transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
         fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
@@ -117,7 +117,7 @@ function FloatingSelect({ id, label, value, onChange, options, delay = 0 }) {
         }}
       >
         <option value="" disabled />
-        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        {options.map(o => <option key={o.value} value={o.value} style={{ background: C.bgCard }}>{o.label}</option>)}
       </select>
       <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: C.textMuted, pointerEvents: 'none' }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m6 9 6 6 6-6"/></svg>
@@ -127,6 +127,7 @@ function FloatingSelect({ id, label, value, onChange, options, delay = 0 }) {
 }
 
 export default function CreateOffer() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({ title: '', description: '', location: '', duration: '', domain: '', contractType: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -140,8 +141,7 @@ export default function CreateOffer() {
     if (form.description.length > 500) { setError('La description est trop longue (max 500 caractères).'); return; }
     setError(''); setLoading(true);
     try {
-      // await api.post('/offers', form);
-      await new Promise(r => setTimeout(r, 1200));
+      await api.post('/offers', form);  // ← appel réel
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.error || 'Une erreur est survenue.');
@@ -152,29 +152,18 @@ export default function CreateOffer() {
 
   const domainOptions = [
     { value: 'Développement', label: 'Développement' },
-    { value: 'Data & IA', label: 'Data & IA' },
-    { value: 'Design', label: 'Design' },
-    { value: 'Infrastructure', label: 'Infrastructure' },
-    { value: 'Marketing', label: 'Marketing' },
-    { value: 'Finance', label: 'Finance' },
-    { value: 'Autre', label: 'Autre' },
+    { value: 'Data & IA',     label: 'Data & IA'     },
+    { value: 'Design',        label: 'Design'        },
+    { value: 'Infrastructure',label: 'Infrastructure'},
+    { value: 'Marketing',     label: 'Marketing'     },
+    { value: 'Finance',       label: 'Finance'       },
+    { value: 'Autre',         label: 'Autre'         },
   ];
-  const durationOptions = [
-    { value: '1 mois', label: '1 mois' },
-    { value: '2 mois', label: '2 mois' },
-    { value: '3 mois', label: '3 mois' },
-    { value: '4 mois', label: '4 mois' },
-    { value: '5 mois', label: '5 mois' },
-    { value: '6 mois', label: '6 mois' },
-  ];
-  const contractOptions = [
-    { value: 'Stage', label: 'Stage' },
-    { value: 'Alternance', label: 'Alternance' },
-    { value: 'CDD', label: 'CDD' },
-  ];
+  const durationOptions = ['1 mois','2 mois','3 mois','4 mois','5 mois','6 mois'].map(v => ({ value: v, label: v }));
+  const contractOptions = ['Stage','Alternance','CDD'].map(v => ({ value: v, label: v }));
 
   const filled = Object.values(form).filter(Boolean).length;
-  const total = Object.keys(form).length;
+  const total  = Object.keys(form).length;
 
   return (
     <>
@@ -183,13 +172,12 @@ export default function CreateOffer() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: ${C.bg}; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes pulseRing { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
-        @keyframes checkDraw { from { stroke-dashoffset: 50; } to { stroke-dashoffset: 0; } }
-        @keyframes orb1 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-20px) scale(1.1); } 66% { transform: translate(-20px,15px) scale(0.95); } }
-        @keyframes orb2 { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-25px,20px) scale(0.9); } 66% { transform: translate(20px,-10px) scale(1.05); } }
-        @keyframes grain { 0%,100% { transform: translate(0,0); } 10% { transform: translate(-2%,-3%); } 30% { transform: translate(3%,-1%); } 50% { transform: translate(-1%,2%); } 70% { transform: translate(2%,3%); } 90% { transform: translate(-3%,1%); } }
+        @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes spin    { to   { transform: rotate(360deg); } }
+        @keyframes pulseRing  { 0%   { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2);   opacity: 0; } }
+        @keyframes checkDraw  { from { stroke-dashoffset: 50; } to { stroke-dashoffset: 0; } }
+        @keyframes orb1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(30px,-20px) scale(1.1)} 66%{transform:translate(-20px,15px) scale(0.95)} }
+        @keyframes orb2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-25px,20px) scale(0.9)} 66%{transform:translate(20px,-10px) scale(1.05)} }
         .create-btn {
           width: 100%; padding: 15px; border: none; border-radius: 12px;
           background: ${C.accent}; color: #fff;
@@ -225,7 +213,6 @@ export default function CreateOffer() {
           boxShadow: '0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset',
           animation: 'slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both',
         }}>
-          {/* Top line */}
           <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, background: `linear-gradient(90deg, transparent, ${C.accent}, transparent)`, borderRadius: '0 0 4px 4px' }} />
 
           {success ? (
@@ -241,19 +228,17 @@ export default function CreateOffer() {
               <p style={{ color: C.text, fontSize: '1.1rem', fontWeight: 600, marginBottom: 8, fontFamily: "'Fraunces', serif" }}>Offre publiée !</p>
               <p style={{ color: C.textMuted, fontSize: '0.82rem', marginBottom: 24 }}>Votre offre est maintenant visible par les candidats.</p>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                <button onClick={() => { setSuccess(false); setForm({ title: '', description: '', location: '', duration: '', domain: '', contractType: '' }); }} style={{
-                  padding: '10px 20px', borderRadius: 10, background: C.accentLight,
-                  border: `1px solid rgba(141,23,35,0.2)`, color: C.accent,
-                  fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif", transition: 'all 0.2s',
-                }}>Nouvelle offre</button>
-                <a href="/offers" style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, color: C.textSec, fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', transition: 'all 0.2s' }}>Voir les offres →</a>
+                <button onClick={() => { setSuccess(false); setForm({ title: '', description: '', location: '', duration: '', domain: '', contractType: '' }); }} style={{ padding: '10px 20px', borderRadius: 10, background: C.accentLight, border: `1px solid rgba(141,23,35,0.2)`, color: C.accent, fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                  Nouvelle offre
+                </button>
+                <button onClick={() => navigate('/')} style={{ padding: '10px 20px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, color: C.textSec, fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                  Voir les offres →
+                </button>
               </div>
             </div>
           ) : (
             <>
-              {/* Header */}
-              <div style={{ marginBottom: 32, animation: 'slideUp 0.5s cubic-bezier(0.16,1,0.3,1) 0ms both' }}>
+              <div style={{ marginBottom: 32 }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 12px', borderRadius: 8, background: C.accentLight, border: `1px solid rgba(141,23,35,0.2)`, marginBottom: 20 }}>
                   <div style={{ width: 7, height: 7, borderRadius: '50%', background: C.accent }} />
                   <span style={{ color: C.accent, fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Annonces de Stages</span>
@@ -263,8 +248,6 @@ export default function CreateOffer() {
                   <span style={{ display: 'block', color: C.accent, fontStyle: 'italic', fontWeight: 300 }}>offre de stage.</span>
                 </h1>
                 <p style={{ color: C.textSec, fontSize: '0.82rem', lineHeight: 1.6 }}>Publiez une offre et trouvez le talent qu'il vous faut.</p>
-
-                {/* Progress bar */}
                 <div style={{ marginTop: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                     <span style={{ color: C.textMuted, fontSize: '0.7rem' }}>Complétude du formulaire</span>
@@ -280,36 +263,33 @@ export default function CreateOffer() {
                 <FloatingInput id="title" label="Titre du poste" value={form.title} onChange={set('title')} delay={80}
                   icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>}
                 />
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, animation: `slideUp 0.5s cubic-bezier(0.16,1,0.3,1) 120ms both` }}>
-                  <FloatingSelect id="domain" label="Domaine" value={form.domain} onChange={set('domain')} options={domainOptions} />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <FloatingSelect id="domain"       label="Domaine"         value={form.domain}       onChange={set('domain')}       options={domainOptions}   />
                   <FloatingSelect id="contractType" label="Type de contrat" value={form.contractType} onChange={set('contractType')} options={contractOptions} />
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, animation: `slideUp 0.5s cubic-bezier(0.16,1,0.3,1) 160ms both` }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <FloatingSelect id="duration" label="Durée" value={form.duration} onChange={set('duration')} options={durationOptions} />
-                  <FloatingInput id="location" label="Lieu" value={form.location} onChange={set('location')}
+                  <FloatingInput  id="location" label="Lieu"  value={form.location} onChange={set('location')}
                     icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>}
                   />
                 </div>
-
                 <FloatingTextarea id="description" label="Description du poste" value={form.description} onChange={set('description')} delay={200} rows={5} />
 
                 {error && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', animation: 'fadeIn 0.2s ease both' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
                     <span style={{ color: C.red, fontSize: '0.78rem' }}>{error}</span>
                   </div>
                 )}
 
-                <div style={{ marginTop: 6, animation: 'slideUp 0.5s cubic-bezier(0.16,1,0.3,1) 240ms both' }}>
+                <div style={{ marginTop: 6 }}>
                   <button type="submit" className="create-btn" disabled={loading}>
                     {loading ? (
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                         Publication…
                       </span>
-                    ) : 'Publier l\'offre'}
+                    ) : "Publier l'offre"}
                   </button>
                 </div>
               </form>
