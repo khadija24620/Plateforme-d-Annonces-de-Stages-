@@ -245,8 +245,8 @@ export default function AdminDashboard() {
 
                     {/* Offre */}
                     <div>
-                      <p style={{ color: C.textSec, fontSize: '0.82rem', marginBottom: 2, lineHeight: 1.3 }}>{app.offer.title}</p>
-                      <p style={{ color: C.textMuted, fontSize: '0.72rem' }}>{app.offer.company?.companyName ?? '—'} · {new Date(app.createdAt).toLocaleDateString('fr-FR')}</p>
+                      <p style={{ color: C.textSec, fontSize: '0.82rem', marginBottom: 2, lineHeight: 1.3 }}>{app.offer?.title ?? '—'}</p>
+                      <p style={{ color: C.textMuted, fontSize: '0.72rem' }}>{app.offer?.company?.companyName ?? '—'} · {new Date(app.createdAt).toLocaleDateString('fr-FR')}</p>
                     </div>
 
                     {/* Statut */}
